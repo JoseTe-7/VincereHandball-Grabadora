@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="token" content="__TOKEN__">
+  <meta name="viewer-key" content="__VIEWER_KEY__">
+  <meta name="color-scheme" content="dark">
+  <title>VincereHandball Grabador</title>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="banner" id="banner" role="status" hidden></div>
+
+  <div class="app">
+
+    <main class="stage-wrap">
+      <section class="stage no-feed" id="stage" aria-label="Vista de la cámara">
+        <img id="feed" alt="Vista en directo de la cámara" hidden>
+        <video id="tabletFeed" autoplay muted playsinline hidden aria-label="Vista previa local de la cámara de la tablet"></video>
+        <canvas id="tabletCanvas" hidden></canvas>
+
+        <div class="stage-empty" id="stageEmpty">
+          <svg class="empty-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M15 10l6-3v10l-6-3"/></svg>
+          <div class="spinner" id="spinner" hidden></div>
+          <h1 id="emptyTitle">Sin cámara conectada</h1>
+          <p id="emptyText">Conecta la cámara o capturadora por USB y pulsa Conectar.</p>
+          <button class="btn-outline" id="btnConnect" type="button">Conectar cámara USB</button>
+          <button class="btn-outline" id="btnTabletCamera" type="button" hidden>Usar cámara de esta tablet</button>
+        </div>
+
+        <div class="hud hud-top">
+          <div class="hud-left">
+            <div class="pill" id="camPill" hidden>
+              <i class="dot dot-ok"></i>
+              <span id="camName"></span>
+              <span class="muted" id="camRes"></span>
+              <span class="muted" id="camFps"></span>
+            </div>
+            <div class="pill" id="linkPill" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>
+              <span id="linkText"></span>
+            </div>
+          </div>
+          <div class="pill pill-rec" id="recPill" hidden><i class="dot dot-rec"></i>Grabando</div>
+        </div>
+
+        <div class="hud hud-bottom">
+          <div class="caption">
+            <div class="cap-player" id="capPlayer"></div>
+            <div class="cap-exercise" id="capExercise"></div>
+            <div class="cap-target" id="capTarget"></div>
+          </div>
+          <div class="clock" id="clock" aria-live="off">00:00</div>
+        </div>
+      </section>
+    </main>
+
+    <div class="layout-splitter" id="layoutSplitter" role="separator" aria-label="Redimensionar espacio de cámara y controles" aria-orientation="vertical" aria-valuemin="15" aria-valuemax="85" aria-valuenow="55" tabindex="0" title="Arrastra para cambiar el espacio de cámara y botones"></div>
+
+    <aside class="panel">
+      <header class="panel-head">
+        <div class="brand">
+          <img class="brand-logo" src="/favicon.ico" alt="Logo VincereHandball" onerror="this.hidden=true">
+          <span>VincereHandball Grabador</span>
+        </div>
+        <div class="head-actions">
+          <button class="layout-mode-btn" id="btnCameraLayout" type="button" aria-label="Cambiar tamaño de la cámara" title="Alternar entre cámara normal y botonera">Cámara: normal</button>
+          <button class="btn-outline" id="btnConnectDevice" type="button" title="Conectar una tablet o móvil">Conectar dispositivo</button>
+          <button class="icon-btn" id="btnDisplay" type="button" aria-label="Abrir pantalla para el proyector" title="Pantalla para el proyector">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>
+          </button>
+          <button class="icon-btn" id="btnSettings" type="button" aria-label="Ajustes" aria-haspopup="dialog" title="Ajustes">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <nav class="tabs" id="sessionTabs" aria-label="Sesiones de grabación"></nav>
+
+      <div class="team-row">
+        <button class="team-btn" id="btnTeam" type="button" aria-haspopup="dialog" aria-label="Cambiar de equipo">
+          <span class="team-name" id="teamName"></span>
+          <span class="team-count" id="teamCount"></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+
+      <div class="panel-body">
+        <section class="block">
+          <div class="sec-head">
+            <h2>Jugador</h2>
+            <button class="icon-btn small" id="editPlayers" type="button" aria-label="Editar jugadores y categorías" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></svg>
+            </button>
+          </div>
+          <div class="groups" id="players" role="group" aria-label="Jugador"></div>
+        </section>
+
+        <section class="block">
+          <div class="sec-head">
+            <h2>Ejercicio <span class="opt">opcional</span></h2>
+            <button class="icon-btn small" id="editExercises" type="button" aria-label="Editar lista de ejercicios" aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></svg>
+            </button>
+          </div>
+          <div class="groups" id="exercises" role="group" aria-label="Ejercicio"></div>
+        </section>
+
+        <section class="block">
+          <div class="sec-head"><h2>Últimos clips</h2></div>
+          <p class="hint">Los vídeos se guardan en la carpeta de destino seleccionada.</p>
+          <ul class="recent" id="recent"></ul>
+          <p class="hint" id="recentEmpty">Los clips que grabes aparecerán aquí.</p>
+        </section>
+      </div>
+
+      <footer class="actions">
+        <section class="retro-timeline" id="retroTimeline" aria-label="Duración de la jugada retrospectiva">
+          <div class="timeline-heading"><strong>Jugada retrospectiva</strong><span id="retroSelectionLabel">Últimos 10 segundos</span></div>
+          <div class="timeline-track" aria-hidden="true"><span class="timeline-fill" id="timelineFill"></span></div>
+          <div class="timeline-options" id="timelineOptions" role="group" aria-label="Seleccionar duración">
+            <button type="button" class="timeline-option is-selected" data-seconds="10" aria-pressed="true">10 s</button>
+            <button type="button" class="timeline-option" data-seconds="15" aria-pressed="false">15 s</button>
+            <button type="button" class="timeline-option" data-seconds="20" aria-pressed="false">20 s</button>
+            <button type="button" class="timeline-option" data-seconds="25" aria-pressed="false">25 s</button>
+            <button type="button" class="timeline-option" data-seconds="30" aria-pressed="false">30 s</button>
+            <button type="button" class="timeline-option" data-seconds="60" aria-pressed="false">1 min</button>
+          </div>
+        </section>
+        <button class="card card-go" id="btnRec" type="button">
+          <span class="card-top">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7" fill="currentColor" stroke="none"/></svg>
+            <kbd>Espacio</kbd>
+          </span>
+          <span class="card-label">Grabar</span>
+        </button>
+        <button class="card card-stop" id="btnStop" type="button">
+          <span class="card-top">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" stroke="none"/></svg>
+            <kbd>Espacio</kbd>
+          </span>
+          <span class="card-label">Parar</span>
+        </button>
+        <button class="card card-cancel" id="btnCancel" type="button" disabled title="Descarta la grabación actual sin guardar el clip">
+          <span class="card-top"><span aria-hidden="true">×</span></span>
+          <span class="card-label">Cancelar</span>
+        </button>
+        <button class="card card-retro" id="btnRetro" type="button" title="Guarda el intervalo seleccionado de la línea de tiempo">
+          <span class="card-top"><span aria-hidden="true">⟲</span><span class="retro-time">10 s</span></span>
+          <span class="card-label retro-label">¡Guardar última jugada!</span>
+        </button>
+      </footer>
+    </aside>
+  </div>
+
+  <div class="backdrop" id="backdrop"></div>
+
+  <!-- Equipos -->
+  <aside class="sheet" id="sheetTeams" role="dialog" aria-modal="true" aria-labelledby="teamsTitle" inert>
+    <header class="sheet-head">
+      <h2 id="teamsTitle">Equipos</h2>
+      <button class="icon-btn" data-close type="button" aria-label="Cerrar equipos">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </header>
+    <p class="sheet-intro" id="teamsIntro"></p>
+    <div class="team-list" id="teamList"></div>
+    <div class="row" id="teamNew"></div>
+
+    <section class="sheet-block" id="teamManage">
+      <h3 id="manageTitle"></h3>
+      <div class="row" id="manageRow"></div>
+      <p class="hint">Los cambios se guardan solos. "Guardar copia" crea un archivo para llevar el equipo a otro ordenador.</p>
+    </section>
+
+    <section class="sheet-block">
+      <button class="btn-outline" id="btnImport" type="button">Importar copia de un equipo</button>
+    </section>
+  </aside>
+
+  <!-- Ajustes -->
+  <aside class="sheet" id="sheetSettings" role="dialog" aria-modal="true" aria-labelledby="settingsTitle" inert>
+    <header class="sheet-head">
+      <h2 id="settingsTitle">Ajustes</h2>
+      <button class="icon-btn" data-close type="button" aria-label="Cerrar ajustes">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </header>
+
+    <section class="sheet-block">
+      <h3>Sesión</h3>
+      <form class="name-form" id="sessionNameForm">
+        <input id="sessionName" type="text" maxlength="20" autocomplete="off" aria-label="Nombre de la sesión">
+        <button class="btn-outline" type="submit">Renombrar</button>
+      </form>
+      <div class="pavilion-settings">
+        <label for="sessionPavilion">Pabellón de esta pista</label>
+        <select id="sessionPavilion" aria-label="Pabellón de esta pista">
+          <option value="none">Sin pabellón</option>
+        </select>
+        <div class="row pavilion-actions">
+          <button class="btn-outline" id="btnCreatePavilion" type="button">Crear pabellón</button>
+          <button class="btn-outline" id="btnRenamePavilion" type="button">Renombrar</button>
+          <button class="btn-outline btn-danger" id="btnDeletePavilion" type="button">Eliminar</button>
+        </div>
+        <p class="hint">Opcional: agrupa varias pistas bajo un pabellón. Si no necesitas esta organización, deja «Sin pabellón».</p>
+      </div>
+    </section>
+
+    <fieldset class="sheet-block" id="cameraBlock">
+      <legend>Cámaras disponibles</legend>
+      <div class="chips" id="cameraChips" role="group" aria-label="Cámaras detectadas"></div>
+      <p class="hint">Elige una cámara física, capturadora o cámara virtual de móvil y pulsa Conectar. Las fuentes reconocidas como el mismo dispositivo no se asignarán a dos sesiones.</p>
+      <p class="hint camera-troubleshooting">¿No aparece DroidCam? Abre el cliente de DroidCam en Windows, conecta el móvil y confirma que la imagen funciona allí; después pulsa «Volver a buscar». VinceGraba detecta cámaras que Windows expone como dispositivos de vídeo.</p>
+      <p class="hint">Las cámaras virtuales de móvil (por ejemplo, DroidCam o Iriun) aparecerán aquí cuando Windows las publique como dispositivo de vídeo. Si un dispositivo ofrece más de un sistema de captura, puedes elegirlo desde su propia tarjeta.</p>
+      
+      <div style="margin-top: 18px;">
+        <label style="font-weight: 700; font-size: 14px; color: var(--muted);">Calidad de imagen</label>
+        <div class="chips" id="resChips" role="group" aria-label="Resolución" style="margin-top: 8px;"></div>
+      </div>
+      <button class="btn-solid" id="btnApplyCamera" type="button">Conectar cámara de Windows</button>
+
+      <section class="droidcam-direct" aria-labelledby="droidcamDirectTitle" style="margin-top:18px;padding:14px;border:1px solid var(--line-strong);border-radius:12px;">
+        <h3 id="droidcamDirectTitle" style="margin:0 0 8px;">DroidCam directo · sin cámara virtual de Windows</h3>
+        <p class="hint" style="margin:0 0 10px;">Para Android con <strong>DroidCam IP Cam</strong>: Python recibe el MJPEG directamente del móvil, sin cliente virtual de Windows. Solo esta fuente usa grabación H.264 QP 0 de máxima calidad; puede generar archivos mucho más grandes que las cámaras normales.</p>
+        <label for="droidcamDirectIp" style="font-size:13px;font-weight:700;color:var(--muted);">IP del móvil</label>
+        <input id="droidcamDirectIp" type="text" inputmode="decimal" placeholder="Ej. 192.168.1.25" autocomplete="off" style="width:100%;min-height:44px;padding:0 14px;margin:5px 0 10px;border-radius:10px;border:1px solid var(--line-strong);background:var(--floor);color:var(--ink);">
+        <label for="droidcamDirectPort" style="font-size:13px;font-weight:700;color:var(--muted);">Puerto (el que muestra el móvil)</label>
+        <input id="droidcamDirectPort" type="number" min="1" max="65535" value="4747" inputmode="numeric" style="width:100%;min-height:44px;padding:0 14px;margin:5px 0 10px;border-radius:10px;border:1px solid var(--line-strong);background:var(--floor);color:var(--ink);">
+        <button class="btn-solid" id="btnConnectDroidcamDirect" type="button">Conectar DroidCam directo</button>
+        <p class="hint" style="margin:9px 0 0;">Conecta ambos equipos a la misma red local y prueba primero <code>http://IP:PUERTO/video/force/1280x720</code> en el navegador del PC. Cierra el cliente virtual mientras usas esta ruta. IP Cam no está disponible en todas las apps/versiones y esta conexión directa no sirve para Iriun.</p>
+      </section>
+    </fieldset>
+
+    <section class="sheet-block" hidden aria-hidden="true">
+      <h3>Otras fuentes de vídeo (YouTube)</h3>
+      
+      <div style="margin-bottom: 12px;">
+        <label style="font-size: 13px; font-weight: 700; color: var(--muted);">Cámaras YouTube en esta sesión</label>
+        <div class="chips" id="youtubeActiveCameras" role="group" style="margin-top: 6px;"></div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
+        <label for="youtubeUrl" style="font-size: 13px; font-weight: 700; color: var(--muted);">Enlace del directo de YouTube</label>
+        <input id="youtubeUrl" type="text" placeholder="https://www.youtube.com/watch?v=..." style="width: 100%; min-height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--floor); color: var(--ink);">
+
+        <label style="font-size: 13px; font-weight: 700; color: var(--muted);">Vista / Recorte del directo</label>
+        <div class="chips" id="youtubeCropChips" role="group"></div>
+
+        <button class="btn-solid" id="btnAddYoutubeCamera" type="button" style="margin-top: 8px;">
+          Añadir nueva cámara desde YouTube
+        </button>
+      </div>
+      
+      <p class="hint">El directo se reproduce siguiendo el tiempo del flujo. La grabación retrospectiva no está disponible para fuentes de YouTube.</p>
+    </section>
+
+    <section class="sheet-block">
+      <h3>Sesiones a la vez</h3>
+      <p class="hint" id="sessionsHint"></p>
+      <div class="row">
+        <button class="btn-outline" id="btnAddSession" type="button">Añadir sesión</button>
+        <button class="btn-outline btn-danger" id="btnRemoveSession" type="button">Quitar esta sesión</button>
+      </div>
+    </section>
+
+    <section class="sheet-block">
+      <h3>Pantalla del proyector</h3>
+      <p class="hint">Muestra el vídeo en directo, el jugador y el cronómetro. Se abre en el segundo monitor si lo hay.</p>
+      <div class="row">
+        <button class="btn-outline" id="btnDisplayAll" type="button">Todas las sesiones</button>
+        <button class="btn-outline" id="btnDisplayOne" type="button"></button>
+      </div>
+      <p class="hint" id="presence"></p>
+    </section>
+
+    <section class="sheet-block">
+      <h3>Carpeta de los clips</h3>
+      <p class="path" id="basePath"></p>
+      <div class="row">
+        <button class="btn-outline" id="btnChooseDir" type="button">Cambiar carpeta</button>
+        <button class="btn-outline" id="btnOpenBase" type="button">Abrir carpeta</button>
+      </div>
+    </section>
+
+    <section class="sheet-block">
+      <h3>Atajos de teclado</h3>
+      <dl class="keys">
+        <dt><kbd>Espacio</kbd></dt><dd>Grabar y parar</dd>
+        <dt><kbd>1</kbd> a <kbd>9</kbd></dt><dd>Elegir jugador</dd>
+        <dt><kbd>Esc</kbd></dt><dd>Cerrar este panel</dd>
+      </dl>
+    </section>
+  </aside>
+
+  <!-- Conectar dispositivo -->
+  <aside class="sheet" id="sheetDevice" role="dialog" aria-modal="true" aria-labelledby="deviceTitle" inert>
+    <header class="sheet-head">
+      <h2 id="deviceTitle">Conectar dispositivo</h2>
+      <button class="icon-btn" data-close type="button" aria-label="Cerrar conexión"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </header>
+    <p class="hint">Conecta la tablet o el móvil a la misma red Wi-Fi que este ordenador y escanea el QR para abrir la botonera.</p>
+    <div id="deviceConnectContent" class="device-connect-content" aria-live="polite"><p>Preparando enlace…</p></div>
+  </aside>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+  <script src="/app.js"></script>
+</body>
+</html>

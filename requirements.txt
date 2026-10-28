@@ -1,0 +1,8 @@
+opencv-python>=4.8
+pywebview>=6.0
+cryptography>=42.0
+zeroconf>=0.132
+qrcode[pil]>=7.4
+yt-dlp[default]>=2026.1.29
+pygrabber>=0.2; sys_platform == "win32"
+imageio-ffmpeg>=0.5
