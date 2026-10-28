@@ -1,1 +1,1 @@
-"""VincereHandball Grabadora."""
+"""Grabador de entrenamientos de extremos de balonmano."""

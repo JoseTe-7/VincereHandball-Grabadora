@@ -24,7 +24,7 @@ pip install -r requirements.txt
 Dirigete a la carpeta donde lo tienes guardado utilizando el comando cd.
 
 ```bash
-cd "(Carpeta donde lo tienes guardado)"
+cd C:\(Carpeta donde lo tienes guardado)
 python main.py --browser --lan
 ```
 

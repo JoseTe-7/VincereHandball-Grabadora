@@ -37,7 +37,7 @@ def _close_other_windows(main) -> None:
 
 # ====================================================================== modos
 def run_host(args: argparse.Namespace, lock: instance.InstanceLock) -> int:
-    instance.remove_host_info()
+    instance.remove_host_info()                      # por si quedó un fichero de una ejecución anterior
     service = RecorderService()
     server = LocalServer(service, lan=args.lan)
     server.start()
@@ -119,7 +119,7 @@ def run_attached(args: argparse.Namespace) -> int:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="VincereHandball Grabadora")
+    parser = argparse.ArgumentParser(description="Grabador de entrenamientos de extremos")
     parser.add_argument("--browser", action="store_true", help="usar el navegador en vez de una ventana propia")
     parser.add_argument("--lan", action="store_true", help="exponer el servidor en la LAN mediante HTTPS (el certificado debe confiarse en la tablet)")
     parser.add_argument("--display", action="store_true", help="abrir también la pantalla del proyector al arrancar")

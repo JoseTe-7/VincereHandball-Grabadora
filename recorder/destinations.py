@@ -7,7 +7,7 @@ from pathlib import Path
 
 def default_video_directory() -> Path:
     """Carpeta predeterminada de clips del usuario."""
-    return Path.home() / "Videos" / "VincereHandball_Grabadora"
+    return Path.home() / "Videos" / "Entrenamientos_Extremos"
 
 
 def prepare_video_directory(value: str | Path) -> Path:

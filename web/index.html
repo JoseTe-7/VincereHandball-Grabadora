@@ -149,7 +149,7 @@
         </button>
         <button class="card card-retro" id="btnRetro" type="button" title="Guarda el intervalo seleccionado de la línea de tiempo">
           <span class="card-top"><span aria-hidden="true">⟲</span><span class="retro-time">10 s</span></span>
-          <span class="card-label retro-label">¡Guardar última jugada!</span>
+          <span class="card-label retro-label">Repeticion</span>
         </button>
       </footer>
     </aside>
@@ -213,8 +213,6 @@
       <legend>Cámaras disponibles</legend>
       <div class="chips" id="cameraChips" role="group" aria-label="Cámaras detectadas"></div>
       <p class="hint">Elige una cámara física, capturadora o cámara virtual de móvil y pulsa Conectar. Las fuentes reconocidas como el mismo dispositivo no se asignarán a dos sesiones.</p>
-      <p class="hint camera-troubleshooting">¿No aparece DroidCam? Abre el cliente de DroidCam en Windows, conecta el móvil y confirma que la imagen funciona allí; después pulsa «Volver a buscar». VinceGraba detecta cámaras que Windows expone como dispositivos de vídeo.</p>
-      <p class="hint">Las cámaras virtuales de móvil (por ejemplo, DroidCam o Iriun) aparecerán aquí cuando Windows las publique como dispositivo de vídeo. Si un dispositivo ofrece más de un sistema de captura, puedes elegirlo desde su propia tarjeta.</p>
       
       <div style="margin-top: 18px;">
         <label style="font-weight: 700; font-size: 14px; color: var(--muted);">Calidad de imagen</label>
@@ -230,11 +228,10 @@
         <label for="droidcamDirectPort" style="font-size:13px;font-weight:700;color:var(--muted);">Puerto (el que muestra el móvil)</label>
         <input id="droidcamDirectPort" type="number" min="1" max="65535" value="4747" inputmode="numeric" style="width:100%;min-height:44px;padding:0 14px;margin:5px 0 10px;border-radius:10px;border:1px solid var(--line-strong);background:var(--floor);color:var(--ink);">
         <button class="btn-solid" id="btnConnectDroidcamDirect" type="button">Conectar DroidCam directo</button>
-        <p class="hint" style="margin:9px 0 0;">Conecta ambos equipos a la misma red local y prueba primero <code>http://IP:PUERTO/video/force/1280x720</code> en el navegador del PC. Cierra el cliente virtual mientras usas esta ruta. IP Cam no está disponible en todas las apps/versiones y esta conexión directa no sirve para Iriun.</p>
       </section>
     </fieldset>
 
-    <section class="sheet-block" hidden aria-hidden="true">
+    <section class="sheet-block">
       <h3>Otras fuentes de vídeo (YouTube)</h3>
       
       <div style="margin-bottom: 12px;">

@@ -1,0 +1,9 @@
+LOGO DE VINCEREHANDBALL
+
+Copia tu archivo de logo en formato .ico en esta carpeta y llámalo exactamente:
+
+    favicon.ico
+
+Se utilizará automáticamente como icono de la pestaña del navegador y como logo junto al nombre “VincereHandball Grabador” en la cabecera de la aplicación web. No hace falta editar HTML ni Python.
+
+Después de copiarlo, reinicia la aplicación y recarga el navegador con Ctrl+F5. Para cambiar el logo, sustituye este archivo por tu nuevo favicon.ico.
